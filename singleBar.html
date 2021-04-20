@@ -1,0 +1,146 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>P5.js Single Bar Chart</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.3.1/p5.min.js"></script>
+    <script src="./singleBar.js"></script>
+  </head>
+  <body>
+    <!-- no body is needed. P5.js creates the canvas and draws to it directly -->
+    <script>
+      // Debugging method
+      let debug = true
+      function dbg(msg) {
+        if (debug) {
+          console.log(msg)
+        }
+      }
+
+      // Value boxes
+      let i1, i2, i3, i4, i5
+
+      let bullet // bullet chart object
+      let canvas // canvas
+
+      let a = 5  // Default value[0]
+      let b = 3  // Default value[1]
+      let c = 2  // Default value[2]
+      let d = 7  // Default value[3]
+      let e = 12 // Default value[4]
+
+      let cbHide, helpDiv // HTML elements for checkbox and link text
+
+      /*
+       * Create bar in a single run - no looping
+       */
+      function setup() {
+        let params = getURLParams()
+
+        // Update or remove these settings based on your preference
+        // Only `values` is required
+        const values = params.values ? params.values.split(',') : [a, b, c, d]
+        const width = params.width || false
+        const height = params.height || false
+
+        const hideValues =
+          (params.hideValues &&
+            (params.hideValues == 'true' || params.hideValues == 'yes')) ||
+          false
+
+        const showValues = !hideValues
+
+        if (values) { // Values were supplied, so set them
+          a = values[0]
+          b = values[1]
+          c = values[2]
+          d = values[3]
+          e = values[4]
+        } else {      // No values, so use the defaults
+          values = [a, b, c, d]
+        }
+        // If you remove variables above, remove them from this constructor call, too
+        sb = new SingleBar(values, showValues) //, width, height)
+
+        // The bullet object calculates the proper width and height of the canvas
+        canvas = createCanvas(sb.getWidth(), sb.getHeight())
+        sb.display()
+        noLoop() // Do not execute the draw() method
+
+        let inputSize = 30
+        i1 = createInput(a).size(inputSize).input(inputEvent)
+        i2 = createInput(b).size(inputSize).input(inputEvent)
+        i3 = createInput(c).size(inputSize).input(inputEvent)
+        i4 = createInput(d).size(inputSize).input(inputEvent)
+        i5 = createInput(e).size(inputSize).input(inputEvent)
+
+        cbHide = createCheckbox('hide values', hideValues).changed(checkEvent)
+
+        helpDiv = createDiv()
+        updateHelpDiv()
+
+        if (params.save) {
+          let filename = params.save || 'singleBar'
+          saveCanvas(canvas, filename, 'png')
+        }
+      }
+
+      /**
+       * When one of the value boxes changes, 
+       * set the new values and trigger a display refresh
+       *
+       * @memberof SingleBar
+       */
+      function inputEvent() {
+        if (i5.value()) {
+          sb.setValues([
+            i1.value(),
+            i2.value(),
+            i3.value(),
+            i4.value(),
+            i5.value(),
+          ])
+        } else if (i4.value()) {
+          sb.setValues([i1.value(), i2.value(), i3.value(), i4.value()])
+        } else {
+          // min 3 values
+          sb.setValues([i1.value(), i2.value(), i3.value()])
+        }
+        updateHelpDiv()
+        sb.display()
+      }
+
+      /**
+       * Toggle the hideValues checkbox 
+       * then refresh bar display
+       *
+       * @memberof SingleBar
+       */
+      function checkEvent() {
+        sb.setShowValues(!this.checked())
+        updateHelpDiv()
+        sb.display()
+      }
+
+      /**
+       * Show the hyperlink for the currently displayed bar
+       *
+       * @memberof SingleBar
+       */
+      function updateHelpDiv() {
+        helpDiv.html(
+          `<a href='singleBar.html?values=${sb.values.join(
+            ','
+          )}&hideValues=${cbHide.checked()}'>singleBar.html?values=${sb.values.join(
+            ','
+          )}&hideValues=${cbHide.checked()}</a>`
+        )
+      }
+
+      function draw() {
+        // no-op - the chart is drawn in the setup() and *Event() methods
+      }
+    </script>
+  </body>
+</html>
