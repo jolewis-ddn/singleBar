@@ -1,6 +1,9 @@
 # singleBar
 Simple single bar chart (uses p5.js)
 
+[![@license](https://img.shields.io/github/license/jolewis-ddn/singleBar)](https://github.com/jolewis-ddn/singleBar/blob/main/LICENSE)
+[![@release](https://img.shields.io/github/v/release/jolewis-ddn/singleBar)](https://github.com/jolewis-ddn/singleBar/releases/)
+
 # Parameters
 
 * `values`: Array of numeric values (between 3 and 5 values in length) (no default)
